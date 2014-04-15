@@ -1,0 +1,28 @@
+Zsh starter module
+-------
+
+Login shells are the programs that users interact with. They interpret
+commands typed at the command line. We would like to provide a new shell
+for our users. This requires that we install a package, and also customize
+configuration file(s). The configuration file(s) should be updated after the
+package is installed, just in case the package installs a default and
+overwrites our customizations.
+
+
+Instructions
+-------
+
+Please follow the instructions in your lab, or visit
+https://puppetlabs.com/learn/help for more assistance.
+
+
+License
+-------
+
+Apache License, Version 2.0
+
+
+Contact
+-------
+
+Please direct feedback to the Education team <education@puppetlabs.com>

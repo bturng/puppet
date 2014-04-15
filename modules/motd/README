@@ -1,0 +1,24 @@
+Motd starter module
+-------
+
+The /etc/motd file is presented to users each time they log in.
+We would like to customize this message in various ways.
+
+
+Instructions
+-------
+
+Please follow the instructions in your lab, or visit
+https://puppetlabs.com/learn/help for more assistance.
+
+
+License
+-------
+
+Apache License, Version 2.0
+
+
+Contact
+-------
+
+Please direct feedback to the Education team <education@puppetlabs.com>

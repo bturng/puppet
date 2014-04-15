@@ -1,0 +1,26 @@
+Shells starter module
+-------
+
+Login shells are the programs that users interact with. They interpret
+commands typed at the command line. We would like to ensure that our
+system allows users to use the shells we have installed, by listing
+them in /etc/shells.
+
+
+Instructions
+-------
+
+Please follow the instructions in your lab, or visit
+https://puppetlabs.com/learn/help for more assistance.
+
+
+License
+-------
+
+Apache License, Version 2.0
+
+
+Contact
+-------
+
+Please direct feedback to the Education team <education@puppetlabs.com>
