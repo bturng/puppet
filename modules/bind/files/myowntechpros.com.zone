@@ -1,0 +1,24 @@
+$ORIGIN myowntechpros.com.
+$TTL 86400
+@               IN      SOA     dns.myowntechpros.com.  master.myowntechpros.com. (
+                        2014032800 ; serial
+                        21600      ; refresh after 6 hours
+                        3600       ; retry after 1 hour
+                        604800     ; expire after 1 week
+                        86400      ; minimum TTL of 1 day
+)
+
+                IN      NS      dns.myowntechpros.com.
+                IN      MX      10      mail.myowntechpros.com.
+
+mail            IN      A       192.168.2.15
+cobbler         IN      A       192.168.2.19
+controller      IN      A       192.168.2.21
+dns             IN      A       192.168.2.22
+storage         IN      A       192.168.2.23
+compute         IN      A       192.168.2.24
+puppet          IN      A       192.168.2.25
+network         IN      A       192.168.2.26
+ansible         IN      A       192.168.2.30
+nagios          IN      A       192.168.2.31
+

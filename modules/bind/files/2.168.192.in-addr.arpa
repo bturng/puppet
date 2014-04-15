@@ -1,0 +1,21 @@
+ORIGIN 2.168.192.in-addr.arpa.
+$TTL 86400
+@       IN      SOA     dns.myowntechpros.com.  master.myowntechpros.com. (
+                        2014032800 ; serial
+                        21600      ; refresh after 6 hours
+                        3600       ; retry after 1 hour
+                        604800     ; expire after 1 week
+                        86400 )    ; minimum TTL of 1 day
+
+@       IN      NS      dns.myowntechpros.com.
+15      IN      PTR     mail.myowntechpros.com.
+19     IN       PTR     cobbler.myowntechpros.com.
+21     IN      PTR     controller.myowntechpros.com.
+22     IN      PTR     dns.myowntechpros.com.
+23     IN      PTR     storage.myowntechpros.com.
+24     IN      PTR     compute.myowntechpros.com.
+25     IN      PTR     puppet.myowntechpros.com.
+26     IN      PTR     network.myowntechpros.com.
+30     IN      PTR     ansible.myowntechpros.com.
+31      IN      PTR     nagios.myowntechpros.com.
+

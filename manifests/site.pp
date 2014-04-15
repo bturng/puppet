@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> ec8f331eb989fe47efe34162f00e1347a2e0f33f
 ## site.pp ##
 
 # This file (/etc/puppetlabs/puppet/manifests/site.pp) is the main entry point
@@ -40,5 +36,27 @@ File { backup => 'main' }
 # specified in the console for that node.
 
 node default {
+
 }
-hiera_include('classes')
+node "dns.myowntechpros.com" {
+	include bind
+	bind::server::conf { '/etc/named.conf':
+  	listen_on_addr    => [ 'any' ],
+  	listen_on_v6_addr => [ 'any' ],
+  	forwarders        => [ '192.168.2.1', '75.75.75.75' ],
+  	allow_query       => [ 'localnets' ],
+  		zones             => {
+    			'myowntechpros.com' => [
+      			'type master',
+      			'file "myowntechpros.com.zone"',
+    			],
+    			'2.168.192.in-addr.arpa' => [
+      			'type master',
+      			'file "2.168.192.in-addr.arpa"',
+    			],
+  		},
+	}
+	bind::server::file { [ 'myowntechpros.com.zone', '2.168.192.in-addr.arpa' ]:
+	  source_base => 'puppet:///modules/bind/',
+	}
+}
