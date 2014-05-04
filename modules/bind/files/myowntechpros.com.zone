@@ -1,7 +1,7 @@
 $ORIGIN myowntechpros.com.
 $TTL 86400
 @               IN      SOA     dns.myowntechpros.com.  master.myowntechpros.com. (
-                        2014032800 ; serial
+                        2014042600 ; serial
                         21600      ; refresh after 6 hours
                         3600       ; retry after 1 hour
                         604800     ; expire after 1 week

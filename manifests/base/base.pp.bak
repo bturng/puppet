@@ -1,0 +1,58 @@
+class base {
+
+  notify {"Connected to ${servername}":
+    loglevel => notice,
+  }
+
+  include accounts
+
+  Accounts::Virtualgroups <| |>
+  Accounts::Virtualuser <| |>
+  resources {
+    'user':
+      purge                => false;
+  }
+
+  include sudo
+
+  sudo::conf { 'base_admins':
+    priority => 01,
+    content  => "#Managed by Puppet\n\n%admins ALL=(ALL) NOPASSWD: ALL\n",
+  }
+
+  sudo::conf { 'base_leads':
+    priority => 02,
+    content  => "#Managed by Puppet\n\n%leads ALL=(ALL) NOPASSWD: ALL\n",
+  }
+
+  sudo::conf { 'ansible':
+    priority => 03,
+    content  => "#Managed by Puppet\n\nansible ALL=(ALL) NOPASSWD: ALL\n",
+  }
+
+  if $hostname =~ /puppet/ {
+    include puppet_master
+  } else {
+    include puppet_client
+  }
+ include system_tuning
+
+  include ldconfig
+
+  include yum_client
+
+  include ntp
+
+  include dns_client
+
+  include postfix
+
+  if $virtual == 'vmware' {
+    include vmware-tools
+  } elsif $virtual == 'physical' {
+    include bare_metal
+  }
+
+  include common
+}
+

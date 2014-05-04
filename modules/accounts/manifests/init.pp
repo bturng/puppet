@@ -23,12 +23,12 @@ class accounts inherits accounts::params {
     realname        => 'Ansible',
     pass            => '!!',
   }
-  @accounts::virtualuser { 'root':
-    uid             =>  0,
-    realname        => 'root',
-    system          => true,
-    groups          => ['bin','daemon','sys','adm','disk','wheel'],
-    shell           => '/bin/bash',
-    pass            => '$1$LjrKL324$Kd3kS6xWcM89eA70urd1H/',
-  }
+#  @accounts::virtualuser { 'root':
+#    uid             =>  0,
+#    realname        => 'root',
+#    system          => true,
+#    groups          => ['bin','daemon','sys','adm','disk','wheel'],
+#    shell           => '/bin/bash',
+#    pass            => '$1$LjrKL324$Kd3kS6xWcM89eA70urd1H/',
+#  }
 }

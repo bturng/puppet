@@ -1,0 +1,78 @@
+{
+  "name": "example42-nagios",
+  "version": "2.0.16",
+  "summary": "Puppet module for nagios",
+  "author": "Alessandro Franceschi",
+  "description": "This module installs and manages nagios. Check README.rdoc for details. Puppi is required for some common functions: you can install them without using the whole module. Monitor and firewall dependencies are needed only if the relevant features are enabled",
+  "dependencies": [
+    {
+      "name": "example42/puppi",
+      "version_requirement": ">=2.0.0"
+    },
+    {
+      "name": "example42/nrpe",
+      "version_requirement": ">=2.0.0"
+    },
+    {
+      "name": "example42/apache",
+      "version_requirement": ">=2.0.0"
+    },
+    {
+      "name": "puppetlabs/concat",
+      "version_requirement": ">=0.0.1"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "LICENSE": "a300b604c66de62cf6e923cca89c9d83",
+    "Modulefile": "fe5c8d0116dc79155f8905882b811dc5",
+    "README.md": "41041d24a65bbbdad1f4d1be43cc253a",
+    "Rakefile": "e90d68823ff237c89224eb139f8926ad",
+    "files/nagios-plugins/check_ageandcontent.pl": "d5e5c558f032ad761f8ad412c34eda70",
+    "files/nagios-plugins/check_mount": "97acab95ffea09121d44d06e614d9fd8",
+    "files/nagios-plugins/check_oracle": "0d842c86112b0529582ff1eeb226da29",
+    "files/nagios-plugins/check_yum": "dde2becb60a0e77807a15025f8c31195",
+    "manifests/baseservices.pp": "071a08083a775d71f87bfd97f94ca270",
+    "manifests/command.pp": "a34c4bdd6083d2f6109f6cac5b5f835f",
+    "manifests/contact.pp": "8443001c6a202354cb41091ffe8c1f19",
+    "manifests/contactgroup.pp": "95e87308ec6146f393d6acab60b991b6",
+    "manifests/host.pp": "39ab542eb8ef60fb30f61a8062d9c91c",
+    "manifests/hostgroup.pp": "4a4018353afecb230ae5451d98cf0860",
+    "manifests/init.pp": "743edefea3963001ef2ff703843b5201",
+    "manifests/params.pp": "b6be3c006eff11ea38daee4e3df7e1eb",
+    "manifests/plugin.pp": "e9fb55685c9b24edc9e6ca57e941c60f",
+    "manifests/plugins.pp": "27b7e5b84c9f4f5e05c5b05d11d03fe3",
+    "manifests/prerequisites.pp": "6432e4067220c3a7cdd30bea39e19979",
+    "manifests/service.pp": "c7c3da049248e68597835f083f51e850",
+    "manifests/skel.pp": "63d00468834c061f47c618c2b8d2db7e",
+    "manifests/spec.pp": "177a2716538353cc2feb2c889029aa0f",
+    "manifests/target.pp": "3211c2e9f4ff7493a7aec9ab743dde73",
+    "spec/classes/nagios_spec.rb": "202566be3bcf77bf24294103e6f6771c",
+    "spec/spec_helper.rb": "0db89c9a486df193c0e40095422e19dc",
+    "templates/baseservices.erb": "288ede378200c2d40ce888d0cb0f8f8d",
+    "templates/command.erb": "a5562586fa3d22b6331b21ae2a0f83e4",
+    "templates/commands/extra.cfg": "b82ab1c80a0d37651a0c12d812689d0c",
+    "templates/commands/general.cfg": "1e5a5c1c25704fd226bebe79ee56b0db",
+    "templates/commands/special.cfg": "a2f48e1646ab040fce3e1becb3ef18a0",
+    "templates/contact.erb": "8816007e72ad5d1356f0411e1d9260ba",
+    "templates/contactgroup.erb": "116f049fcd52daa1fe6686e92e5ccdd8",
+    "templates/host.erb": "fac4c695f454cc30248fc6ee17f26628",
+    "templates/hostgroup.erb": "211976bbec302381d94c0426dfdbb22b",
+    "templates/hostgroups/all.cfg": "e45233d7d33e4537ce7a52b2ec3ba3da",
+    "templates/hosts/localhost.cfg": "835286e47d70ee96352a1632ee32a986",
+    "templates/htpasswd": "4ad4986461b1d612aaf0580061876c69",
+    "templates/nagios.cfg.erb": "b0429ca31a6b8a61075f8653eceed2b6",
+    "templates/nrpe_cfg/nrpe-check_disk.cfg.erb": "f7c045aed0298a49044b35b34ed63705",
+    "templates/nrpe_cfg/nrpe-check_yum.cfg.erb": "c6aa0d289b87baaaf88a1efdf0bb98a8",
+    "templates/service.erb": "a023513f37c22dc36a34cc1f5c35a406",
+    "templates/settings/contacts.cfg": "58ee8aa13247b28b6a59f3d1ac0dd3ad",
+    "templates/settings/templates.cfg": "3e041981f6884a7694a8bf9594922b80",
+    "templates/settings/timeperiods.cfg": "1c751a124c9339337f4b7b64d6ebbe86",
+    "templates/spec.erb": "055d4f22a02a677753cf922108b6e50c"
+  },
+  "source": "https://github.com/example42/puppet-nagios",
+  "project_page": "http://www.example42.com",
+  "license": "Apache2"
+}

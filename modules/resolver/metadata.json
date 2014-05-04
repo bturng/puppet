@@ -1,0 +1,32 @@
+{
+  "name": "example42-resolver",
+  "version": "2.0.12",
+  "summary": "Puppet module for resolver",
+  "author": "Alessandro Franceschi",
+  "description": "This module installs and manages resolver. Check README.rdoc for details. Puppi is required for some common functions: you can install them without using the whole module. Monitor and firewall dependencies are needed only if the relevant features are enabled",
+  "dependencies": [
+    {
+      "name": "example42/puppi",
+      "version_requirement": ">=2.0.0"
+    }
+  ],
+  "types": [
+
+  ],
+  "checksums": {
+    "LICENSE": "a300b604c66de62cf6e923cca89c9d83",
+    "Modulefile": "9dc22b7ec9758d88aa92294370bf7832",
+    "README.md": "8c4901df7cd157454bb3cff61307e7b2",
+    "Rakefile": "e90d68823ff237c89224eb139f8926ad",
+    "manifests/init.pp": "2483d3e998bad18af2f8d08426a0aa8e",
+    "manifests/params.pp": "9bd8b74bafac1893ddd4038d2bc82015",
+    "manifests/spec.pp": "26a157a75da09bffd2a5c318aec14c98",
+    "spec/classes/resolver_spec.rb": "0fcaef7b998d33b2c753dbaf735f2abc",
+    "spec/spec_helper.rb": "0db89c9a486df193c0e40095422e19dc",
+    "templates/resolv.conf.erb": "df06b41d2e20e22cd9971a4dfec35666",
+    "templates/spec.erb": "95554a191230174b3ba5942f8d8d5b1e"
+  },
+  "source": "https://github.com/example42/puppet-resolver",
+  "project_page": "http://www.example42.com",
+  "license": "Apache2"
+}

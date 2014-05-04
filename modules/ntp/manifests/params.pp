@@ -9,14 +9,15 @@ class ntp::params {
   $package_ensure    = 'present'
   $preferred_servers = []
   $restrict          = [
-    'restrict default kod nomodify notrap nopeer noquery',
-    'restrict -6 default kod nomodify notrap nopeer noquery',
-    'restrict 127.0.0.1',
-    'restrict -6 ::1',
+    'default kod nomodify notrap nopeer noquery',
+    '-6 default kod nomodify notrap nopeer noquery',
+    '127.0.0.1',
+    '-6 ::1',
   ]
   $service_enable    = true
   $service_ensure    = 'running'
   $service_manage    = true
+  $udlc              = false
 
   # On virtual machines allow large clock skews.
   $panic = str2bool($::is_virtual) ? {
@@ -25,6 +26,19 @@ class ntp::params {
   }
 
   case $::osfamily {
+    'AIX': {
+      $config = '/etc/ntp.conf'
+      $keysfile = '/etc/ntp.keys'
+      $driftfile = '/etc/ntp.drift'
+      $package_name = [ 'bos.net.tcp.client' ]
+      $service_name = 'xntpd'
+      $servers = [
+        '0.debian.pool.ntp.org iburst',
+        '1.debian.pool.ntp.org iburst',
+        '2.debian.pool.ntp.org iburst',
+        '3.debian.pool.ntp.org iburst',
+      ]
+    }
     'Debian': {
       $config          = '/etc/ntp.conf'
       $keys_file       = '/etc/ntp/keys'
@@ -88,8 +102,23 @@ class ntp::params {
         '2.pool.ntp.org',
       ]
     }
+    # Gentoo was added as its own $::osfamily in Facter 1.7.0
+    'Gentoo': {
+      $config          = '/etc/ntp.conf'
+      $driftfile       = '/var/lib/ntp/drift'
+      $keys_file       = '/etc/ntp/keys'
+      $package_name    = ['net-misc/ntp']
+      $service_name    = 'ntpd'
+      $servers         = [
+        '0.gentoo.pool.ntp.org',
+        '1.gentoo.pool.ntp.org',
+        '2.gentoo.pool.ntp.org',
+        '3.gentoo.pool.ntp.org',
+      ]
+    }
     'Linux': {
       # Account for distributions that don't have $::osfamily specific settings.
+      # Before Facter 1.7.0 Gentoo did not have its own $::osfamily
       case $::operatingsystem {
         'Gentoo': {
           $config          = '/etc/ntp.conf'
