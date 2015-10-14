@@ -1,0 +1,16 @@
+$TTL 86400
+@   IN  SOA     utility.audsci.local. root.audsci.local. (
+        2015091600  ;Serial
+        3600        ;Refresh
+        1800        ;Retry
+        604800      ;Expire
+        86400       ;Minimum TTL
+)
+@       IN  NS          utility.audsci.local.
+@       IN  PTR         audsci.local.
+utility         IN  A   192.168.81.145
+puppet          IN  A   192.168.81.144
+cobbler		IN  A	192.168.81.143
+145     IN  PTR         utility.audsci.local.
+144     IN  PTR         puppet.audsci.local.
+143	IN  PTR		cobbler.audsci.local.

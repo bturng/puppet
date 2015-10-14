@@ -1,0 +1,2 @@
+# generic cron.d entry
+0 0 0 0 0 root echo "test" >/dev/null 2>&1

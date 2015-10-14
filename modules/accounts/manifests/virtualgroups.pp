@@ -1,8 +1,9 @@
 define accounts::virtualgroups (
-  $gid ) {
-  group {
-    $title:
+          $gid,
+          $members =  undef ) {
+  group {$title:
       gid                   => $gid,
-      ensure                => present;
+      members               => $members,
+      ensure                => present,
   }
 }

@@ -1,0 +1,296 @@
+#!/usr/bin/env perl
+
+=head1 NAME 
+motd - Script to automate /etc/motd
+
+=head1 SYNOPSIS
+
+    motd init
+    motd generate|gen
+    motd list
+    motd [--priority|-p] add LABEL [FILE | MESG]
+    motd delete|del LABEL
+    motd enable|ena LABEL
+    motd disable|dis LABEL
+
+
+=head1 DESCRIPTION
+
+The motd script is used to manage parts of the motd file and build the 
+system's motd file from the parts stored in /etc/motd.d. Once initialized,
+it is easy to quickly add and remove text from the system's motd file.
+
+By executing C<motd init>, the /etc/motd.d directory is created and the 
+legal disclaimer is added to the directory at priority level 00 so that it
+will be the first part added to the motd file. Each motd part stored in 
+/etc/motd.d is assigned a priority level (00 - 99) which specifies the order 
+that the parts will be added to the motd file. The parts can be listed by 
+using the C<list> subcommand.
+
+Once initialized, administrators are able to add new messages to the motd file 
+with the C<add> subcommand, remove messages with the C<delete> subcommand or 
+enable/disable messages with the C<enable/disable> subcommands. The C<add> 
+subcommand requires a label (alphanumeric text to associate with the text)
+to be specified, but the remaining subcommands can specify the label or 
+the priority of the message.
+
+When adding a message, the message priority can be specified with the 
+C<--priority> option. If the priority is not specified, then the priority 
+will be automatically be assigned starting at 30 and increasing by 5 until 
+a priority level is found that is not assigned. This allows messages to be 
+written to the motd in date order quickly without needing to specify a
+priority. 
+
+=head1 OPTIONS
+
+=over 4
+
+=item --priority |-prio | -p NUM
+
+Specify the priority level for the motd label being created. 
+
+=item --help | -h
+
+Display the commands help.
+
+=back
+
+=cut
+
+use constant MOTD_DIR => '/etc/motd.d';
+use constant BASE_PRIORITY => 30;
+
+use English;
+use POSIX qw(setuid getuid);
+use Time::localtime;
+use Getopt::Long qw(:config no_ignore_case bundling);
+
+$ENV{'PATH'} = '/bin:/usr/bin';
+
+GetOptions qw(help|h priority|prio|r=i );
+
+if ($#ARGV >= 0) {
+    $SUBCMD = shift @ARGV;
+    $LABEL = shift @ARGV;
+}
+
+if (defined $opt_help) {
+     # print help text here
+     use Pod::Usage;
+     &pod2usage ( -output => \*STDERR, -exitval => 1, -verbose => 1 );
+}
+
+
+if (!defined($SUBCMD)) {
+    system('cat /etc/motd');
+    exit(0);
+}
+
+
+if ($SUBCMD =~ /list|ls/) {
+    my %messageList = &listMotdMessages;
+    foreach my $lev (sort(keys(%messageList))) {
+        my $perms = (stat(&messageFilePath($lev, $messageList{$lev})))[2];
+        printf("\t%02d:\t%s\t%s\n", $lev, $messageList{$lev},
+                $perms == 0x8000 ? "(Disabled)" : "");
+    }
+    exit(0);
+}
+
+
+if ($SUBCMD =~ /init/) {
+    # make motd directory if not present
+    if ( [ -d MOTD_DIR ] ) {
+        mkdir(MOTD_DIR);
+        #chown('root', 'search', MOTD_DIR);
+        chown('root', 'admin', MOTD_DIR);
+        chmod(0775, MOTD_DIR);
+    }
+    
+    # preseed motd directory with std template
+    open(FH, '>' . &messageFilePath(0, "ebay-authorized-use"));
+    print FH << 'EOM';
+
+        #################################################################
+        #                                                               #
+        #    This system is for the use of authorized users only.       #
+        #    Individuals using this computer system without             #
+        #    authority, or in excess of their authority, are            #
+        #    subject to having all of their activities on this          #
+        #    system monitored and recorded by system personnel.         #
+        #                                                               #
+        #    In the course of monitoring individuals improperly         #
+        #    using this system, or in the course of system              #
+        #    maintenance, the activities of authorized users            #
+        #    may also be monitored.                                     #
+        #                                                               #
+        #    Anyone using this system expressly consents to such        #
+        #    monitoring and is advised that if such monitoring          #
+        #    reveals possible evidence of criminal activity,            #
+        #    system personnel may provide the evidence of such          #
+        #    monitoring to law enforcement officials.                   #
+        #                                                               #
+        #          This system/database contains restricted data.       #
+        #                                                               #
+        #################################################################
+        
+EOM
+    close(fh); 
+    chmod(0444, &messageFilePath(0, "ebay-authorized-use"));
+    
+    &generateMotdFile();
+}
+
+
+if ($SUBCMD =~ /add/) {
+    my $mesg_priority;
+    
+    # find the priority level
+    if (defined $opt_priority) {
+        $mesg_priority = $opt_priority;
+    } else {
+        # find the next available motd priority
+        my %messageList = &listMotdMessages;
+        for (my $lev = BASE_PRIORITY; $lev <= 99; $lev += 5) {
+            if (!exists($messageList{$lev})) {
+                $mesg_priority = $lev;
+                last;
+            }
+        }  
+    }
+    
+    # Ensure that the message priority has been set
+    if (!defined($mesg_priority)) {
+        print STDERR "Message priority level can not be automatically determined.";
+        print STDERR "Priority must be manually specified.";
+        exit(1);
+    }
+    
+    # Gather the text for the file
+    my @lines;
+    if ($#ARGV >= 0) {
+        if (-r "$ARGV[0]") {
+            # read the file specified on the command line for the text
+            open(FH, "$ARGV[0]") || die "Unable to read file: $ARGV[0]";
+            @lines = <FH>;
+            close(FH);
+        } else {
+            # no file, use $ARGV as the message text
+            $lines[0] = join(' ', @ARGV);
+        }
+    } else {
+        @lines = <STDIN>;
+    }
+    
+    # Create the file
+    my $motdFile = &messageFilePath($mesg_priority, $LABEL);
+    open(FH, ">$motdFile") || die "Can not create file: $motdFile\n";
+    $currentTime = ctime();
+    # Find the current user
+    $currentUser = $ENV{'SUDO_USER'} || getpwuid($UID);
+    print FH ">>> Added $currentTime by $currentUser\n";
+    print FH '    ', @lines;
+    print FH "\n\n";
+    close(FH); 
+    
+    &generateMotdFile();
+}
+
+
+if ($SUBCMD =~ /delete|del/) {
+    (my $level, my $label) = &findMessageParts($LABEL);
+    unlink(&messageFilePath($level, $label));
+    &generateMotdFile();
+}
+
+
+if ($SUBCMD =~ /enable|ena/) {
+    ($lev, $label) = &findMessageParts($LABEL);
+    chmod(0444, &messageFilePath($lev, $label));
+    &generateMotdFile();
+}
+
+
+if ($SUBCMD =~ /disable|dis/) {
+    ($lev, $label) = &findMessageParts($LABEL);
+    chmod(0000, &messageFilePath($lev, $label));
+    &generateMotdFile();
+}
+
+
+if ($SUBCMD =~ /generate|gen/) {
+    &generateMotdFile();
+}
+
+
+
+## 
+# listMotdMessages()
+#
+# Build a hash of message priorities and message labels
+#
+sub listMotdMessages() {
+    chdir MOTD_DIR;
+    open(FH, "/bin/ls -1 ??-* |");
+    while ($file = <FH>) {
+        ($prio, $label) = ($file =~ /(\d\d)-(.*)/);
+        $messages{$prio} = $label;
+    }
+    close(FH);
+    return(%messages);
+}
+
+
+##
+# messageFilePath($priority, $label)
+#
+# Return the full path to a file specified by $priority and $label
+#
+sub messageFilePath() {
+    my $priority = shift;
+    my $label = shift;
+    my $messageFile = MOTD_DIR . sprintf("/%02d-%s", $priority, $label);
+    return($messageFile);
+}
+
+
+sub findMessageParts() {
+    my $part = shift;
+    my @parts;
+    my %messageList = &listMotdMessages;
+    if ($part =~ /^\d+$/) {
+        @parts = ($part, $messageList{$part});
+    } else {
+        foreach $lev (keys(%messageList)) {
+            if ($part eq $messageList{$lev}) {
+                @parts = ($lev, $part);
+                last;
+            }
+        }
+    }
+    return(@parts);
+}
+
+
+##
+# generateMotdFile()
+#
+# Build a new motd file with the active components in /etc/motd.d
+#
+sub generateMotdFile() {
+    # Reconstruct the motd
+    my %messageList = &listMotdMessages;
+    open(MOTD, ">/etc/motd") || die "Can not create /etc/motd\n";
+    foreach my $lev (sort(keys(%messageList))) {
+        # Read in each file and append to /etc/motd
+        my $file = &messageFilePath($lev, $messageList{$lev});
+        if ((stat($file))[2] & 0777) {
+            open(FH, "<$file");
+            @lines = <FH>;
+            close(FH);
+            print MOTD @lines;
+        }
+
+    }
+    close(MOTD);
+}

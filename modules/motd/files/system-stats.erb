@@ -1,0 +1,11 @@
+System Config: 
+<% if @kernel == 'Linux' -%>
+    <%= @kernel %>/<%= @kernelversion %>  -- <%= @lsbdistdescription %>
+<% elsif @kernel == 'SunOS' -%>
+    <%= @kernel %>/<%= @kernelrelease %> (<%= @kernelversion %>)
+<% else -%>
+    <%= @kernel %>/<%= @kernelversion %>
+<% end -%>
+    <%= @physicalprocessorcount %> CPUs (<%= @processorcount %> cores) <%= @processor0 %>
+    <%= @memorysize %> Memory (<%= @memoryfree %> free) with <%= @swapsize %> swap (<%= @swapfree %> free)
+Puppet version: <%= @puppetversion %> / Ruby <%= @rubyversion %>

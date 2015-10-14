@@ -1,0 +1,11 @@
+name    'ghickey-cron'
+version '1.1.0'
+source 'UNKNOWN'
+author 'ghickey@ebay.com'
+license 'Apache License, Version 2.0'
+summary 'Multiplatform cron Puppet module'
+description 'Puppet module to automate cron and create cron.d files.'
+project_page 'https://github.scm.corp.ebay.com/ghickey/Puppet-ghickey-cron'
+
+## Add dependencies, if any:
+# dependency 'username/name', '>= 1.2.0'

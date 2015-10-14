@@ -1,0 +1,16 @@
+***
+*** This node is managed by new Puppet. 
+*** Puppet Master: <%= @puppetmaster %>
+***
+*** OS:     <%= @operatingsystem %> <%= @operatingsystemrelease %> (<%= @architecture %>) on <% if @virtual == 'physical' %>physical hardware<% else %><%= @virtual %><% end %> 
+<% if @kernel == 'Linux' -%>
+*** Kernel: <%= @kernel %>/<%= @kernelversion %>  (<%= @kernelrelease %>)
+<% elsif @kernel == 'SunOS' -%>
+*** Kernel: <%= @kernel %>/<%= @kernelrelease %> (<%= @kernelversion %>)
+<% else -%>
+*** Kernel: <%= @kernel %>/<%= @kernelversion %>
+<% end -%>
+*** CPU:    <%= @physicalprocessorcount %> CPUs (<%= @processorcount %> cores) <%= @processor0.gsub(/\s+/, ' ') %>
+*** Memory: <%= @memorysize %> with <%= @swapsize %> swap 
+*** Puppet: <%= @puppetversion %> / Ruby <%= @rubyversion %> / Python <%= @pythonversion %> / Java <%= @javaversion %>
+***

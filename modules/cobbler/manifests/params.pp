@@ -21,7 +21,7 @@ class cobbler::params {
   $nameservers    = '127.0.0.1'
 
   # default root password for kickstart files
-  $defaultrootpw = 'bettergenerateityourself'
+  $defaultrootpw = '$1$cobbler$hhN5BwfI7vjt9749/BNAj1'
 
   # dhcp options
   $manage_dhcp        = 0

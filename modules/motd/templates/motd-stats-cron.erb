@@ -1,0 +1,3 @@
+PATH=/usr/local/bin:/usr/bin:/bin
+PUPPET_LOG=/var/log/puppet/puppet.log
+<%= @schedule %>  *   *   *   *   root   puppet apply /etc/puppet/manifests/motd-stats.pp >>$PUPPET_LOG 2>&1

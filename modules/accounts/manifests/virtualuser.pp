@@ -3,13 +3,14 @@
 define accounts::virtualuser (
   $uid,
   $realname,
-  $pass,
+  $pass='*',
   $ensure=present,
   $groups=undef,
   $home=undef,
   $home_mode=undef,
   $system=false,
-  $shell="/bin/bash") {
+  $shell="/bin/bash",
+  $tag=undef, ) {
 
   if $groups {    
     $mygroups = $groups
@@ -50,6 +51,7 @@ define accounts::virtualuser (
     managehome        =>  true,
     membership        =>  inclusive,
     system            =>  $system,
+    tag               =>  $tag,
   }
 
   group { $title:
@@ -80,7 +82,7 @@ define accounts::virtualuser (
         owner             => $title,
         group             => $title,
         mode              => '400',
-        source            => [ "puppet:///modules/accounts/${title}_${accounts::params::environment}.pub",
+        source            => [ "puppet:///modules/accounts/${title}_${accounts::environment}.pub",
                                "puppet:///modules/accounts/${title}.pub",
                                "puppet:///modules/accounts/empty.pub" ];					   
       }

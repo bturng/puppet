@@ -1,0 +1,268 @@
+# Puppet controlled file
+# cygnus:modules/puppet_client/templates/puppet.conf.erb
+# this is just a test
+
+[main]
+    # The server to which server puppet agent should connect
+    # The default value is 'puppet'.
+    server = <%= @puppetmaster %>
+
+    # The Puppet log directory.
+    # The default value is '$vardir/log'.
+    logdir = /var/log/puppet
+
+    # Where Puppet PID files are kept.
+    # The default value is '$vardir/run'.
+    rundir = /var/run/puppet
+
+    vardir = /var/lib/puppet
+    
+    # Where SSL certificates are kept.
+    # The default value is '$confdir/ssl'.
+    ssldir = $vardir/ssl
+
+    # The server to use for certificate
+    # authority requests.  It's a separate server because it cannot
+    # and does not need to horizontally scale.
+    # The default value is '$server'.
+    ca_server = <%= @puppetca %>
+    
+    <% if @masters.member? @hostname -%>
+    dns_alt_names = <%= @hostname %>,<%= @fqdn %>
+    <% end -%>
+    
+[agent]
+    # Whether to send reports after every transaction.
+    # The default value is 'true'.
+    report = true
+    
+    # The file in which puppetd stores a list of the classes
+    # associated with the retrieved configuratiion.  Can be loaded in
+    # the separate ``puppet`` executable using the ``--loadclasses``
+    # option.
+    # The default value is '$confdir/classes.txt'.
+    classfile = $vardir/classes.txt
+
+    # Where puppetd caches the local configuration.  An
+    # extension indicating the cache format is added automatically.
+    # The default value is '$confdir/localconfig'.
+    localconfig = $vardir/localconfig
+
+    # Facts that are dynamic; these facts will be ignored when deciding whether
+    # changed facts should result in a recompile.  Multiple facts should be
+    # comma-separated.
+    # The default value is 'memorysize,memoryfree,swapsize,swapfree'.
+    dynamicfacts = memorysize,memoryfree,swapsize,swapfree
+    
+    # How often puppet agent applies the client configuration; in seconds.
+    # Note that a runinterval of 0 means "run continuously" rather than
+    # "never run." If you want puppet agent to never run, you should start
+    # it with the `--no-client` option.
+    # The default value is '1800'.
+    runinterval = 1800
+    
+    # The maximum time to delay before runs.  Defaults to being the same as the
+    # run interval.
+    # The default value is '$runinterval'.
+    splaylimit = 900
+    
+    
+    # How long the client should wait for the configuration to be retrieved
+    # before considering it a failure.  This can help reduce flapping if too
+    # many clients contact the server at one time.
+    # The default value is '120'.
+    configtimeout = 120
+
+
+<% if @masters.member? @hostname -%>
+[master]
+    # The name to use the Certificate Authority certificate.
+    # The default value is 'Puppet CA: $certname'.
+    ca_name = Puppet CA: <%= @puppetca %>
+    
+    # Wether the master should function as a certificate authority.
+    # The default value is 'true'.
+    ca = <%= @serve_ca %>
+    
+    # How the puppet master determines the client's identity
+    # and sets the 'hostname', 'fqdn' and 'domain' facts for use in the manifest,
+    # in particular for determining which 'node' statement applies to the client.
+    # Possible values are 'cert' (use the subject's CN in the client's
+    # certificate) and 'facter' (use the hostname that the client
+    # reported in its facts)
+    # The default value is 'cert'.
+    node_name = cert
+    
+    # The following needs to be set for some master environments
+    ssl_client_header = HTTP_X_CLIENT_DN
+    ssl_client_verify_header = HTTP_X_CLIENT_VERIFY
+    
+    # The entry-point manifest for puppet master.
+    # The default value is '$manifestdir/site.pp'.
+    manifest = /etc/puppet/manifests/site.pp
+    
+    # Whether to store each client's configuration, including catalogs, facts,
+    # and related data.  This also enables the import and export of resources in
+    # the Puppet language - a mechanism for exchange resources between nodes.
+    # By default this uses ActiveRecord and an SQL database to store and query
+    # the data; this, in turn, will depend on Rails being available.
+    # You can adjust the backend using the storeconfigs_backend setting.
+    storeconfigs = <%= @puppetdbServer ? 'true' : 'false' %>
+    
+    # Whether to use a queueing system to provide asynchronous database integration.
+    # Requires that `puppetqd` be running and that 'PSON' support for ruby be installed.
+    <%= @puppetdbServer ? '' : 'async_storeconfigs = false' %>
+        
+    # The header containing the status
+    # message of the client verification. Only used with Mongrel.  This header must be set by the proxy
+    # to 'SUCCESS' if the client successfully authenticated, and anything else otherwise.
+    # See http://projects.puppetlabs.com/projects/puppet/wiki/Using_Mongrel for more information.
+    # The default value is 'HTTP_X_CLIENT_VERIFY'.
+    # ssl_client_verify_header = HTTP_X_CLIENT_VERIFY
+
+    # Configure the backend terminus used for StoreConfigs.
+    # By default, this uses the ActiveRecord store, which directly talks to the
+    # database from within the Puppet Master process.
+    # The default value is 'active_record'.
+    <%= @puppetdbServer ? 'storeconfigs_backend = puppetdb' : '' %>
+
+    # The list of reports to generate.  All reports are looked for
+    # in `puppet/reports/name.rb`, and multiple report names should be
+    # comma-separated (whitespace is okay).
+    # The default value is 'store'.
+    report = true
+    
+    # disable singlerun for now 
+    reports = <%= @foremanServer ? 'foreman' : '' %><%= @puppetdbServer ? ',puppetdb' : '' %>
+    # reporturl = <%= @puppetConsole %>
+    
+    # The environment Puppet is running in.  For clients
+    # (e.g., `puppet agent`) this determines the environment itself, which
+    # is used to find modules and much more.  For servers (i.e., `puppet master`) this provides the default environment for nodes
+    # we know nothing about.
+    # The default value is 'production'.
+    # environment = bootstrap
+
+    # The node facts terminus.
+    # The default value is 'facter'.
+    facts_terminus = yaml
+
+    # Whether facts should be synced with the central server.
+    # factsync = false
+    
+    # What syslog facility to use when logging to
+    # syslog.  Syslog has a fixed list of valid facilities, and you must
+    # choose one of those; you cannot just make one up.
+    # The default value is 'daemon'.
+    # syslogfacility = daemon
+    
+    # Which type of queue to use for asynchronous processing.  If your stomp server requires
+    # authentication, you can include it in the URI as long as your stomp client library is at least 1.1.1
+    # The default value is 'stomp://localhost:61613/'.
+    # queue_source = stomp://localhost:61613/
+    
+    # What files to ignore when pulling down plugins.
+    # The default value is '.svn CVS .git'.
+    pluginsignore = .svn CVS .git
+
+    # What files to ignore when pulling down facts.
+    # The default value is '.svn CVS'.
+    factsignore = .svn CVS
+    
+    # The shell search path.  Defaults to whatever is inherited
+    # from the parent process.
+    # The default value is 'none'.
+    # path = none
+
+    # Boolean; wether storeconfigs store in the database only the facts and exported resources.
+    # If true, then storeconfigs performance will be higher and still allow exported/collected
+    # resources, but other usage external to Puppet might not work
+    # thin_storeconfigs = false
+    
+    # A command to run before every agent run.  If this command returns a non-zero
+    # return code, the entire Puppet run will fail.
+    # The default value is ''.
+    # prerun_command =
+    
+    # A command to run after every agent run.  If this command returns a non-zero
+    # return code, the entire Puppet run will be considered to have failed, even though it might have
+    # performed work during the normal run.
+    # The default value is ''.
+    # postrun_command =
+    
+    # An external command that can produce node information.  The command's output
+    # must be a YAML dump of a hash, and that hash must have a `classes` key and/or
+    # a `parameters` key, where `classes` is an array or hash and
+    # `parameters` is a hash.  For unknown nodes, the command should
+    # exit with a non-zero exit code.
+    # This command makes it straightforward to store your node mapping
+    # information in other data sources like databases.
+    # The default value is 'none'.
+    #external_nodes = /usr/local/bin/nigel-enc
+    #external_nodes = /etc/puppet/bin/external_nodes_foreman.rb
+    
+    # Where to find information about nodes.
+    # The default value is 'plain'.
+    #node_terminus = exec
+
+    # Whether to print stack traces on some errors
+    trace = false
+
+    # The minimum time to wait (in seconds) between checking for updates in
+    # configuration files.  This timeout determines how quickly Puppet checks whether
+    # a file (such as manifests or templates) has changed on disk.
+    # The default value is '15'.
+    filetimeout = 15
+
+    # Should usually be the same as the facts terminus
+    # The default value is '$facts_terminus'.
+    inventory_terminus = facter
+    
+    # The type of server to use.  Currently supported
+    # options are webrick and mongrel.  If you use mongrel, you will need
+    # a proxy in front of the process or processes, since Mongrel cannot
+    # speak SSL.
+    # The default value is 'webrick'.
+    # servertype = webrick
+    
+    # # The database cache for client configurations.  Used for
+    # # querying within the language.
+    # # The default value is '$statedir/clientconfigs.sqlite3'.
+    # # dblocation = /var/lib/puppet/state/clientconfigs.sqlite3
+    # 
+    # # The name of the database to use.
+    # # The default value is 'puppet'.
+    # dbname = puppet
+    # 
+    # # The database user for caching. Only
+    # # used when networked databases are used.
+    # # The default value is 'puppet'.
+    # dbuser = puppet
+    # 
+    # # The database socket location. Only used when networked
+    # # databases are used.  Will be ignored if the value is an empty string.
+    # # The default value is ''.
+    # # dbsocket = 
+    # 
+    # # The type of database to use.
+    # # The default value is 'sqlite3'.
+    # dbadapter = mysql
+    # 
+    # # The database server for caching. Only
+    # # used when networked databases are used.
+    # # The default value is 'localhost'.
+    # dbserver = slc4b01c-7292.stratus.slc.ebay.com
+    # 
+    # # The database password for caching. Only
+    # # used when networked databases are used.
+    # # The default value is 'puppet'.
+    # dbpassword = iPullTheStrings
+    
+
+    #modulepath = $confdir/environments/$environment/modules;$confdir/environments/common/modules
+    #manifest = $confdir/environments/$environment/manifests/site.pp;$confdir/environments/common/manifests/site.pp
+    
+    modulepath = $confdir/modules
+    manifest = $confdir/manifests/site.pp
+    
+<% end -%>

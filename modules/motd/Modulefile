@@ -1,11 +1,12 @@
-name    'workshop-motd'
-version '0.0.1'
+name    'mit-motd'
+version '1.7.3'
 source 'UNKNOWN'
-author 'workshop'
+author 'gerard.hickey@audiencescience.com'
 license 'Apache License, Version 2.0'
-summary 'UNKNOWN'
-description 'UNKNOWN'
-project_page 'UNKNOWN'
+summary 'Puppet module to manage MOTD files.'
+description 'This module provides the distribution of the motd script and manages the motd subfiles in /etc/motd.d'
+project_page 'http://github.scm.corp.ebay.com/MIT/puppet-mit-motd/'
 
 ## Add dependencies, if any:
 # dependency 'username/name', '>= 1.2.0'
+dependency 'ghickey/cron', '>= 1.0.0', 'https://bitbucket.org/wt0f/ghickey-cron.git'

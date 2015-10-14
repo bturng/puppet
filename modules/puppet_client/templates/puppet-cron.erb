@@ -1,0 +1,7 @@
+# Puppet controlled file
+# cygnus:modules/puppet_client/templates/puppet-cron.erb
+
+# Run puppet agent
+<%= scope.function_fqdn_rand([59]) %> * * * * root /usr/local/sbin/puppet-agent-run.sh > /dev/null 2>&1
+
+15 1 * * * root /bin/find /var/lib/puppet/clientbucket -type f -mtime +7 -exec rm {} \; > /dev/null 2>&1

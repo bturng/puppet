@@ -1,0 +1,12 @@
+name    'ebay-customfact'
+version '1.1.4'
+source 'UNKNOWN'
+author 'Gerard Hickey <ghickey@ebay.com>'
+license 'Apache License, Version 2.0'
+summary 'Puppet module for basic custom facts'
+description 'UNKNOWN'
+project_page 'https://github.scm.corp.ebay.com/Puppet/ebay-customfact'
+
+## Add dependencies, if any:
+# dependency 'username/name', '>= 1.2.0'
+

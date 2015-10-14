@@ -1,0 +1,21 @@
+# Puppet controlled file
+# cygnus:modules/osrepos/templates/yum.repo
+
+[<%= @title %>]
+name=<%= @reponame %>
+baseurl=<%= @baseurl %>
+enabled=<%= (@enable==true or @enable=='true' or @enable=='1' or @enabled==1) ? '1' : '0' %>
+priority=<%= @priority %>
+gpgcheck=<%= (@gpgcheck==true or @gpgcheck=='true' or @gpgcheck=='1' or @gpgcheck==1) ? '1' : '0' %>
+<%  if @gpgcheck and @gpgkey -%>
+<%      if @gpgkey.start_with? 'file:'
+            keyfile = @gpgfile
+        elsif @gpgkey.start_with? '/'
+            # full path
+            keyfile = "file://#{@gpgkey}"
+        else
+            # left with just the file name
+            keyfile = "file:///etc/pki/rpm-gpg/#{@gpgkey}"
+        end -%>
+gpgkey=<%= keyfile %>
+<% end -%>

@@ -1,13 +1,14 @@
 #!/bin/bash
 
 OUTFILE="init.pp"
+OUTFILE2="/etc/puppet/manifests/base/accounts.pp"
 USERFILE="useraccounts.txt"
 GROUPFILE="groups.txt"
 
 cat << EOD > $OUTFILE
 # Used to define/realize users on Puppet-managed systems
 #
-class accounts inherits accounts::params {
+class accounts::virtual {
 
 EOD
 
@@ -43,25 +44,15 @@ while read LINE; do
   echo "    ensure          =>  $ensure," >> $OUTFILE
   echo "    realname        =>  '$comment'," >> $OUTFILE
   echo "    groups          =>  [$qgroups]," >> $OUTFILE
-  echo "    pass            =>  '!!'," >> $OUTFILE
   echo "  }" >> $OUTFILE
 done < $USERFILE
 
 cat << 'EOD' >> $OUTFILE
 
-  #This is the only functional account that is created by puppet.
   @accounts::virtualuser { 'ansible':
     uid             =>  53,
     realname        => 'Ansible',
-    pass            => '!!',
+    pass            => '*',
   }
-#  @accounts::virtualuser { 'root':
-#    uid             =>  0,
-#    realname        => 'root',
-#    system          => true,
-#    groups          => ['bin','daemon','sys','adm','disk','wheel'],
-#    shell           => '/bin/bash',
-#    pass            => '$1$LjrKL324$Kd3kS6xWcM89eA70urd1H/',
-#  }
 }
 EOD

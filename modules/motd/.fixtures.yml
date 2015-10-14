@@ -1,0 +1,6 @@
+---
+    fixtures:
+        repositories:
+            cron: https://bitbucket.org/wt0f/ghickey-cron.git
+            stdlib: https://github.com/puppetlabs/puppetlabs-stdlib.git 
+
